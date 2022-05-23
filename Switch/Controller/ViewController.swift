@@ -9,18 +9,19 @@ import UIKit
 
 class ViewController: UIViewController {
     @IBOutlet weak var passwordField: UITextField!
-    
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var textFieldPassword: UITextField!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
-        view.addGestureRecognizer(tap)
-        //делаем текст в поле пароля невидимым
-        self.passwordField.isSecureTextEntry = true
+        hideKeyboard()
     }
     //функция для появления текста пароля
     @IBAction func visiblePassword(_ sender: UIButton) {
+        configureHidePasswordButton(sender: sender)
+    }
+    
+    private func configureHidePasswordButton(sender: UIButton) {
         passwordField.isSecureTextEntry.toggle()
         //проверям скрыт ли текст или нет
         if passwordField.isSecureTextEntry {
@@ -35,18 +36,11 @@ class ViewController: UIViewController {
             }
         }
     }
-    @IBAction func buttonNext(_ sender: Any) {
-        let cafe = CafeController()
-        // проверка всех полей на заполненность
-        if emailTextField.text!.isEmpty || passwordField.text!.isEmpty {
-            let alert = UIAlertController(title: "Введите данные и пароль", message: nil, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            self.present(alert, animated: true)
-            self.present(cafe, animated: true)
-        }
+    
+    @IBAction func loginButtonPressed(_ sender: UIButton) {
+        guard let cafeVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "cafeVC") as? CafeController else { return }
+        guard emailTextField.text != "" || passwordField.text != "" else { return presentAlert(withText: "Введите данные!") }
+        navigationController?.pushViewController(cafeVC, animated: true)
     }
-    @objc func dismissKeyboard() {
-            view.endEditing(true)
-        }
 }
 
